@@ -1,0 +1,56 @@
+version: '2'
+services:
+  discover:
+    build: ./discover
+    image: discover
+    network_mode: host
+    environment:
+      - INTERFACE=eth0
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+  redis:
+    image: redis:discover
+    build: ./redis
+    command: --cluster-enabled yes --bind 0.0.0.0 --loglevel warning
+    ports: 
+     - 6379
+     - 16379
+    labels:
+     - redis
+    depends_on:
+      - discover
+  rediscluster:
+    image: docker
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+    command: |
+      sh -c "
+        sleep 2
+        cluster_hosts=
+        docker ps -q -f label=redis |
+        {
+          while read x; do
+            private_ip=$$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $$x)
+            cluster_hosts=\"$$cluster_hosts $$private_ip:6379\"
+          done
+          docker run --net redisclustercompose_default --rm ruby sh -c \"gem install redis && wget http://download.redis.io/redis-stable/src/redis-trib.rb && (echo 'yes' | ruby redis-trib.rb create --replicas 1 $$cluster_hosts)\"
+        }
+      "
+    depends_on:
+     - redis
+  reddie:
+    image: get-reddie.com/reddie
+    network_mode: host
+    ports:
+     - 443:443
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+     - ./data:/reddie/data
+    environment:
+     - DISCOVERY_DOCKER_LABEL=redis
+     - DISCOVERY_DOCKER_UNIX_SOCKET=/var/run/docker.sock
+    depends_on:
+     - redis
+     - rediscluster
+
+
