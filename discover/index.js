@@ -11,7 +11,7 @@ function dockerInspect (id, callback) {
 	if (id) {
 		request({
 			method: 'GET',
-			url: 'http://unix:/var/run/docker.sock:/containers/' + id + '/json',
+			url: `http://unix:/var/run/docker.sock:/containers/${id}/json`,
 			headers: {host: 'localhost'},
 			json: true
 		}, (error, res, body) => {
@@ -26,7 +26,7 @@ function dockerInspect (id, callback) {
 			}
 		})
 	} else {
-        callback(new Error("not found"));
+        callback(new Error('not found'));
 	}
 }
 
@@ -36,9 +36,17 @@ app.get('/:id', (req, res) => {
 			res.status(400);
 			res.send(error);
 		} else {
-			let port = container.NetworkSettings.Ports["6379/tcp"][0].HostPort;
-			let cport = container.NetworkSettings.Ports["16379/tcp"][0].HostPort;
-			res.send(clusterAnnounceIp + ":" + port + "@" + cport);
+			let portInfo = container.NetworkSettings.Ports['6379/tcp'];
+			let cportInfo = container.NetworkSettings.Ports['16379/tcp'];
+
+			if (portInfo && cportInfo) {
+				let port = portInfo[0].HostPort;
+				let cport = cportInfo[0].HostPort;
+
+                res.send(`${clusterAnnounceIp}:${port}@${cport}`);
+			} else {
+				res.send('');
+			}
 		}
 	});
 });

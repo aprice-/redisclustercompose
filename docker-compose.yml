@@ -50,5 +50,3 @@ services:
     depends_on:
      - redis
      - rediscluster
-
-

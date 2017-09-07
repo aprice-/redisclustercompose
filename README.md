@@ -15,6 +15,9 @@ Choose a number of nodes for the cluster (at least 6)
 **Launch cluster**
 
     docker-compose up -d --scale redis=9
+    docker-compose logs -f
+    
+It takes a little while.
     
 **Remove containers**
 
@@ -22,3 +25,6 @@ Choose a number of nodes for the cluster (at least 6)
     
 View your cluster with Reddie at `https://localhost`.
     
+**Using Reddie**
+
+Navigate to `https://localhost` to access Reddie.
