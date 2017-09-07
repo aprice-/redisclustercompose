@@ -23,8 +23,6 @@ It takes a little while.
 
     docker-compose rm -f
     
-View your cluster with Reddie at `https://localhost`.
-    
 **Using Reddie**
 
 Navigate to `https://localhost` to access Reddie.
