@@ -38,7 +38,6 @@ services:
      - redis
   reddie:
     image: get-reddie.com/reddie
-    network_mode: host
     ports:
      - 443:443
     volumes:
@@ -47,6 +46,7 @@ services:
     environment:
      - DISCOVERY_DOCKER_LABEL=redis
      - DISCOVERY_DOCKER_UNIX_SOCKET=/var/run/docker.sock
+     - DISCOVERY_DOCKER_ANNOUNCE_IP=172.17.0.1
     depends_on:
      - redis
      - rediscluster
