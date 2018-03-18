@@ -23,6 +23,18 @@ It takes a little while.
 
     docker-compose rm -f
     
+**Run multiple clusters**
+
+    COMPOSE_PROJECT_NAME=cluster1 docker-compose up -d --scale redis=6
+    COMPOSE_PROJECT_NAME=cluster2 docker-compose up -d --scale redis=6
+    COMPOSE_PROJECT_NAME=cluster3 docker-compose up -d --scale redis=6
+    
+**Cleanup multiple clusters**
+
+    COMPOSE_PROJECT_NAME=cluster1 docker-compose kill && COMPOSE_PROJECT_NAME=cluster1 docker-compose rm -f 
+    COMPOSE_PROJECT_NAME=cluster2 docker-compose kill && COMPOSE_PROJECT_NAME=cluster2 docker-compose rm -f
+    COMPOSE_PROJECT_NAME=cluster3 docker-compose kill && COMPOSE_PROJECT_NAME=cluster3 docker-compose rm -f
+        
 **Using Reddie**
 
 Navigate to `https://localhost` to access Reddie.

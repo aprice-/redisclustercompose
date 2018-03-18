@@ -9,6 +9,7 @@
   "author": "Adam Price",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "express": "^4.15.4",
     "ip": "^1.1.5",
     "request": "^2.81.0"
