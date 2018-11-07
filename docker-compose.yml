@@ -31,7 +31,7 @@ services:
             private_ip=$$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $$x)
             cluster_hosts=\"$$cluster_hosts $$private_ip:6379\"
           done
-          docker run --net redisclustercompose_default --rm ruby sh -c \"gem install redis && wget http://download.redis.io/redis-stable/src/redis-trib.rb && (yes 'yes' | ruby redis-trib.rb create --replicas 1 $$cluster_hosts)\"
+          docker run --net redisclustercompose_default --rm redis:alpine sh -c \"(yes 'yes' | redis-cli --cluster create $$cluster_hosts --cluster-replicas 1)\"
         }
       "
     depends_on:
