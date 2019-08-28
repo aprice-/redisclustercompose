@@ -2,6 +2,7 @@ const express = require('express');
 const request = require('request');
 const process = require('process');
 const ip = require('ip');
+const fs = require('fs');
 
 const app = express();
 
@@ -30,7 +31,7 @@ function dockerInspect (id, callback) {
 	}
 }
 
-app.get('/:id', (req, res) => {  
+app.get('/:id', (req, res) => {
 	dockerInspect(req.params.id, (error, container) => {
 		if (error) {
 			res.status(400);
@@ -51,10 +52,21 @@ app.get('/:id', (req, res) => {
 	});
 });
 
-let server = app.listen(3000);
+let server = app.listen('/tmp/sock', function(){
+    fs.chmodSync('/tmp/sock', 0777);
+});
 
-process.on('SIGINT', () => {
+process.on('SIGTERM', () => {
+    console.log('SIGTERM');
     server.close(() => {
+        console.log("stop discover");
+        process.exit();
+    });
+});
+process.on('SIGINT', () => {
+    console.log('SIGINT');
+    server.close(() => {
+        console.log("stop discover");
         process.exit();
     });
 });

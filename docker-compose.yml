@@ -6,6 +6,7 @@ services:
     network_mode: host
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
+     - ./:/tmp
   redis:
     image: redis:discover
     build: ./redis
@@ -17,6 +18,8 @@ services:
      - redis
     depends_on:
       - discover
+    volumes:
+     - ./:/tmp
   rediscluster:
     image: docker
     volumes:
