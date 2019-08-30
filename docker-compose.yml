@@ -1,25 +1,26 @@
-version: '2'
+version: '3'
 services:
   discover:
     build: ./discover
     image: discover
     network_mode: host
     volumes:
-     - /var/run/docker.sock:/var/run/docker.sock
-     - ./:/tmp
+      - /var/run/docker.sock:/var/run/docker.sock
+      - app-volume:/tmp
   redis:
     image: redis:discover
     build: ./redis
     command: --cluster-enabled yes --bind 0.0.0.0 --loglevel warning
-    ports: 
+    ports:
      - 6379
      - 16379
+    volumes:
+     - app-volume:/tmp
     labels:
      - redis
     depends_on:
       - discover
-    volumes:
-     - ./:/tmp
+
   rediscluster:
     image: docker
     volumes:
@@ -53,3 +54,6 @@ services:
     depends_on:
      - redis
      - rediscluster
+
+volumes:
+     app-volume:
