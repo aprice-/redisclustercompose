@@ -2,8 +2,7 @@
 set -e
 
 gateway=$(/sbin/ip route|awk '/default/ { print $3 }')
-
-network_info=$(curl -s http://${gateway}:3000/$(hostname))
+network_info=$(curl --unix-sock /tmp/discover.sock -s http://${gateway}/$(hostname))
 
 cluster_announce_ip=$(echo ${network_info} | cut -d ':' -f 1)
 
